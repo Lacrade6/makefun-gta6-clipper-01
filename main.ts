@@ -3,9 +3,9 @@
 //
 // The entry itself is a public YouTube Short. This program is the part the
 // grader runs: it reads VIDEO.json from the repository root, checks that the
-// address really is a YouTube video, pulls the video id out of it, and
-// writes a small dossier into the output directory so the grader can see
-// exactly which video this repository enters.
+// address really is a YouTube video, pulls the video id out of it, copies
+// VIDEO.json into the output directory for the grader, beside a small
+// dossier naming exactly which video this repository enters.
 //
 // Local run:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
@@ -14,7 +14,7 @@
 // The dossier is deliberately boring: fixed fields, no clock, no random
 // values. Running the program twice must produce byte-identical output.
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -59,6 +59,11 @@ const dossier = {
 };
 
 mkdirSync(outDir, { recursive: true });
+
+// The grader reads the entry from VIDEO.json in the output directory, so
+// hand the repository's file over exactly as it stands.
+copyFileSync(videoPath, join(outDir, 'VIDEO.json'));
+
 writeFileSync(join(outDir, 'dossier.json'), JSON.stringify(dossier, null, 2) + '\n');
 
 console.log(`entered video: ${url}`);
